@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.Domain.Validation
 {
-    public class SalaItemValidator : AbstractValidator<SaleItem>
+    public class SaleItemValidator : AbstractValidator<SaleItem>
     {
-        public SalaItemValidator()
+        public SaleItemValidator()
         {
             RuleFor(item => item.ProductId)
                 .NotEmpty()
@@ -20,8 +20,8 @@ namespace Ambev.DeveloperEvaluation.Domain.Validation
             RuleFor(item => item.Quantity)
                 .GreaterThan(0)
                 .WithMessage("Quantity must be greater than zero.")
-                .LessThan(20)
-                .WithMessage("Quantity must be less than 20.");
+                .LessThanOrEqualTo(20)
+                .WithMessage("Quantity must be less or equal than 20.");
 
             RuleFor(item => item.UnitPrice)
                 .GreaterThan(0)
