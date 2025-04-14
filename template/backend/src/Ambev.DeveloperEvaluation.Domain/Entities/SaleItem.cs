@@ -21,7 +21,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         /// <summary>
         /// Gets the name of the product.
         /// </summary>
-        public string ProductName { get; private set; } = string.Empty;
+        public string ProductName { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets the quantity of the product in the sale.

@@ -24,7 +24,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Validation
                 .WithMessage("Quantity must be less or equal than 20.");
 
             RuleFor(item => item.UnitPrice)
-                .GreaterThan(0)
+                .GreaterThanOrEqualTo(0)
                 .WithMessage("Unit price must be greater than zero.");
         }
     }

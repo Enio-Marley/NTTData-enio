@@ -36,6 +36,8 @@ namespace Ambev.DeveloperEvaluation.Domain.Validation
                 .WithMessage("Sale number cannot be empty.")
                 .GreaterThan(0)
                 .WithMessage("Sale number must be greater than zero.");
+
+            RuleForEach(item => item.Items).SetValidator(new SaleItemValidator());
         }
     }
 }

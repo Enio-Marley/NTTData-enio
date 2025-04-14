@@ -28,7 +28,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         /// <summary>
         /// Gets the name of the customer.
         /// </summary>
-        public string CustomerName { get; private set; } = string.Empty;
+        public string CustomerName { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets the unique identifier of the branch where the sale occurred.
@@ -38,7 +38,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         /// <summary>
         /// Gets the name of the branch where the sale occurred.
         /// </summary>
-        public string BranchName { get; private set; } = string.Empty;
+        public string BranchName { get; set; } = string.Empty;
 
         /// <summary>
         /// Indicates whether the sale has been cancelled.
@@ -53,7 +53,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         /// <summary>
         /// Gets the list of items included in the sale.
         /// </summary>
-        public List<SaleItem> Items { get; private set; } = new();
+        public List<SaleItem> Items { get; set; } = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Sale"/> class with the current date.
