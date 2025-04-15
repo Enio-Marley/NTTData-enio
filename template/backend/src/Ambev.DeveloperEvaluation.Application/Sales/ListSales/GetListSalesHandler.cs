@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Repositories;
+﻿using Ambev.DeveloperEvaluation.Application.Common;
+using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using MediatR;
 
@@ -7,7 +8,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.ListSales
     /// <summary>
     /// Handler for processing GetListSalesCommand requests
     /// </summary>
-    public class GetListSalesHandler : IRequestHandler<GetListSalesCommand, IEnumerable<GetListSalesResult>>
+    public class GetListSalesHandler : IRequestHandler<GetListSalesCommand, PaginatedList<GetListSalesResult>>
     {
         private readonly ISaleRepository _saleRepository;
         private readonly IMapper _mapper;
@@ -23,34 +24,33 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.ListSales
             _saleRepository = saleRepository;
         }
 
-        public async Task<IEnumerable<GetListSalesResult>> Handle(GetListSalesCommand request, CancellationToken cancellationToken)
+        public async Task<PaginatedList<GetListSalesResult>> Handle(GetListSalesCommand request, CancellationToken cancellationToken)
         {
             var sales = await _saleRepository.GetAllAsync(cancellationToken);
+            var query = sales.AsQueryable();
 
             #region Filters
             if (request.SaleNumber.HasValue)
-                sales = sales.Where(s => s.SaleNumber == request.SaleNumber.Value);
+                query = query.Where(s => s.SaleNumber == request.SaleNumber.Value);
 
             if (!string.IsNullOrWhiteSpace(request.CustomerName))
-                sales = sales.Where(s => s.CustomerName.Contains(request.CustomerName));
+                query = query.Where(s => s.CustomerName.Contains(request.CustomerName));
 
             if (!string.IsNullOrWhiteSpace(request.BranchName))
-                sales = sales.Where(s => s.BranchName.Contains(request.BranchName));
+                query = query.Where(s => s.BranchName.Contains(request.BranchName));
 
             if (request.IsCancelled)
-                sales = sales.Where(s => s.IsCancelled == request.IsCancelled);
+                query = query.Where(s => s.IsCancelled == request.IsCancelled);
 
             if (request.DateSaleInitial.HasValue)
-                sales = sales.Where(s => s.SaleDate >= request.DateSaleInitial.Value);
+                query = query.Where(s => s.SaleDate >= request.DateSaleInitial.Value);
 
             if (request.DateSaleFinal.HasValue)
-                sales = sales.Where(s => s.SaleDate <= request.DateSaleFinal.Value);
+                query = query.Where(s => s.SaleDate <= request.DateSaleFinal.Value);
             #endregion
-            
+            var result = query.Select(s => _mapper.Map<GetListSalesResult>(s)).AsQueryable();
 
-            var result = _mapper.Map<IEnumerable<GetListSalesResult>>(sales);
-
-            return result;
+            return await PaginatedList<GetListSalesResult>.CreateAsync(result, request.PageNumber, request.PageSize); ;
         }
     }
 }

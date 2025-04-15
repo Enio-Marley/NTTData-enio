@@ -4,7 +4,6 @@ using Ambev.DeveloperEvaluation.Application.Sales.DeleteSale;
 using Ambev.DeveloperEvaluation.Application.Sales.GetSale;
 using Ambev.DeveloperEvaluation.Application.Sales.ListSales;
 using Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
-using Ambev.DeveloperEvaluation.Application.Users.DeleteUser;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CancelSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
@@ -12,10 +11,10 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Sales.DeleteSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetListSales;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.UpdateSale;
-using Ambev.DeveloperEvaluation.WebApi.Features.Users.DeleteUser;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OneOf.Types;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
 {
@@ -138,14 +137,13 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
         public async Task<IActionResult> GetList([FromBody] GetListSaleRequest request, CancellationToken cancellationToken)
         {
             var command = _mapper.Map<GetListSalesCommand>(request);
-            var response = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(command, cancellationToken);
 
-            return Ok(new ApiResponseWithData<IEnumerable<GetListSaleResponse>>
-            {
-                Success = true,
-                Message = "Get sales list successfully",
-                Data = _mapper.Map<IEnumerable<GetListSaleResponse>>(response)
-            });
+            var mapper = _mapper.Map<List<GetListSaleResponse>>(result.ToList());
+
+            var paginated = new PaginatedList<GetListSaleResponse>(mapper, result.TotalCount, result.CurrentPage, result.PageSize);
+
+            return OkPaginated(paginated);
         }
 
         /// <summary>

@@ -8,7 +8,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
         Task<Sale?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
         Task<Sale?> GetBySaleNumberAsync(long saleNumber, CancellationToken cancellationToken = default);
         Task UpdateAsync(Sale sale, CancellationToken cancellationToken = default);
-        Task<IEnumerable<Sale>> GetAllAsync(CancellationToken cancellationToken = default);
+        Task<IQueryable<Sale>> GetAllAsync(CancellationToken cancellationToken = default);
         Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetListSales
+﻿using System.ComponentModel;
+
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetListSales
 {
     public class GetListSaleRequest
     {
@@ -20,6 +22,7 @@
         /// <summary>
         /// Indicates whether the sale has been cancelled.
         /// </summary>
+        [DefaultValue(false)]
         public bool IsCancelled { get; set; }
 
         /// <summary>
@@ -31,5 +34,17 @@
         /// Gets or sets the final date of the sale filter.
         /// </summary>
         public DateTime? DateSaleFinal { get; set; }
+
+        /// <summary>
+        /// Gets or sets the page number of the sale filter.
+        /// </summary>
+        [DefaultValue(1)]
+        public int? PageNumber { get; set; }
+
+        /// <summary>
+        /// Gets or sets the page size of the sale filter.
+        /// </summary>
+        [DefaultValue(10)]
+        public int? PageSize { get; set; } 
     }
 }

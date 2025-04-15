@@ -1,10 +1,14 @@
-﻿using Ambev.DeveloperEvaluation.Application.Sales.ListSales;
+﻿
+using Ambev.DeveloperEvaluation.Application.Sales.ListSales;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData;
 using AutoMapper;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
+using MockQueryable.NSubstitute;
+using MockQueryable;
 
 namespace Ambev.DeveloperEvaluation.Unit.Application.Sales
 {
@@ -30,33 +34,43 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Sales
             // Arrange
             var sales = new List<Sale>
             {
-                new Sale(1001, Guid.NewGuid(), "Hey Jude", Guid.NewGuid(), "Paul McCartney"),
-                new Sale(1002, Guid.NewGuid(), "Imagine", Guid.NewGuid(), "John Lennon")
+                SaleTestData.GenerateValidSale(),
+                SaleTestData.GenerateValidSale()
             };
 
+            var mockQueryable = sales.BuildMock().BuildMockDbSet();
+
             _saleRepository.GetAllAsync(Arg.Any<CancellationToken>())
-                .Returns(sales);
+                .Returns(mockQueryable);
+            var saleExpected = sales.First();
 
             var command = new GetListSalesCommand
             {
-                CustomerName = "Paul McCartney"
+                CustomerName = saleExpected.CustomerName,
+                PageNumber = 1,
+                PageSize = 10
             };
 
             var expectedResult = new List<GetListSalesResult>
             {
                 new GetListSalesResult
                 {
-                    SaleNumber = 1001,
-                    CustomerName = "Paul McCartney",
-                    BranchName = "Hey Jude"
+                    SaleNumber = saleExpected.SaleNumber,
+                    CustomerName = saleExpected.CustomerName,
+                    BranchName = saleExpected.BranchName,
                 }
             };
 
-            _mapper.Map<IEnumerable<GetListSalesResult>>(Arg.Any<IEnumerable<Sale>>())
+            _mapper.Map<GetListSalesResult>(Arg.Any<Sale>())
                 .Returns(callInfo =>
                 {
-                    var inputSales = callInfo.Arg<IEnumerable<Sale>>();
-                    return expectedResult.Where(r => inputSales.Any(s => s.SaleNumber == r.SaleNumber));
+                    var sale = callInfo.Arg<Sale>();
+                    return new GetListSalesResult
+                    {
+                        SaleNumber = sale.SaleNumber,
+                        CustomerName = sale.CustomerName,
+                        BranchName = sale.BranchName
+                    };
                 });
 
             // Act
@@ -64,7 +78,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Sales
 
             // Assert
             result.Should().NotBeNullOrEmpty();
-            result.Should().ContainSingle(r => r.CustomerName == "Paul McCartney");
+            result.Should().ContainSingle(r => r.CustomerName == saleExpected.CustomerName);
         }
     }
 }

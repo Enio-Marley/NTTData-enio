@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Sales.ListSales;
+using Ambev.DeveloperEvaluation.WebApi.Common;
 using AutoMapper;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetListSales
@@ -7,9 +8,9 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetListSales
     {
         public GetListSalesWebProfile()
         {
-            CreateMap<GetListSalesResult, GetListSaleResponse>().ReverseMap(); 
-            CreateMap<GetListSaleRequest, GetListSalesCommand>().ReverseMap();
-            CreateMap<SaleItemResult, SaleItemResponse>().ReverseMap();
+            CreateMap<GetListSalesResult, GetListSaleResponse>(); 
+            CreateMap<GetListSaleRequest, GetListSalesCommand>();
+            CreateMap<SaleItemResult, SaleItemResponse>();
         }
     }
 }

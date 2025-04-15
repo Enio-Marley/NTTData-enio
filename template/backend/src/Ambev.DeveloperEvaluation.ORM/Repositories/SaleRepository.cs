@@ -71,13 +71,11 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
         /// Get all sales
         /// </summary>
         /// <param name="cancellationToken">Cancellation token</param>
-        public async Task<IEnumerable<Sale>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<IQueryable<Sale>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            var query = _context.Sales
+            return _context.Sales
            .Include(s => s.Items)
-           .AsQueryable();
-
-            return await query.ToListAsync(cancellationToken);
+           .AsNoTracking();
         }
 
         /// <summary>
