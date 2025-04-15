@@ -74,5 +74,21 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
 
             return 0;
         }
+
+        /// <summary>
+        /// Update the instance of the <see cref="SaleItem"/> class with product details and calculates discount.
+        /// </summary>
+        /// <param name="productId">The ID of the product.</param>
+        /// <param name="productName">The name of the product.</param>
+        /// <param name="quantity">The quantity of the product.</param>
+        /// <param name="unitPrice">The unit price of the product.</param>
+        public void Update(Guid productId, string productName, int quantity, decimal unitPrice)
+        {
+            ProductId = productId;
+            ProductName = productName;
+            Quantity = quantity;
+            UnitPrice = unitPrice;
+            Discount = CalculateDiscount(quantity, unitPrice);
+        }
     }
 }

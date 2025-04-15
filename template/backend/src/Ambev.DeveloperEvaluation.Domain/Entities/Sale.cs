@@ -48,7 +48,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         /// <summary>
         /// Gets the total amount of the sale
         /// </summary>
-        public decimal TotalAmount => Items.Sum(i => i.TotalAmount);
+        public decimal TotalAmount => Items?.Sum(i => i.TotalAmount) ?? 0;
 
         /// <summary>
         /// Gets the list of items included in the sale.
@@ -60,7 +60,25 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         /// </summary>
         public Sale()
         {
-            SaleDate = DateTime.Now;
+            SaleDate = DateTime.UtcNow;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Sale"/> class with the current date.
+        /// <param name="saleNumber">The sale number of the sale.</param>
+        /// <param name="branchId">The Id of the branch.</param>
+        /// <param name="branchName">The name of the branch.</param>
+        /// <param name="customerId">The Id of the customer.</param>
+        /// /// <param name="customerName">The name of the customer.</param>
+        /// </summary>
+        public Sale(long saleNumber, Guid branchId, string branchName, Guid customerId, string customerName)
+        {
+            SaleDate = DateTime.UtcNow;
+            SaleNumber = saleNumber;
+            BranchId = branchId;
+            BranchName = branchName;
+            CustomerId = customerId;
+            CustomerName = customerName;
         }
 
 
