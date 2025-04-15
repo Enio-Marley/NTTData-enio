@@ -28,10 +28,11 @@ dotnet ef database update
 
 ## Run the application
 ```
-dotnet run --project src/API
+dotnet run --project src/Ambev.DeveloperEvaluation.WebApi
 ```
 
 ## Run Tests
+Make sure this folder contains the .csproj file for your test project
 ```
 dotnet test
 ```
