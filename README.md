@@ -85,7 +85,7 @@ This section describes the overall structure and organization of the project fil
 
 See [Project Structure](/.doc/project-structure.md)
 
-## Instruction Run the project
+## Instructions on how to execute the project
 This section describes how to run the project. 
 
-See [Project Structure](/.doc/instruction.md)
+See [Instruction](/.doc/instruction.md)
