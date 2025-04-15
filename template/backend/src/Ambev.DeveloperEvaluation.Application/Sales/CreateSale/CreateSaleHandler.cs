@@ -3,6 +3,9 @@ using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Rebus.Bus;
+using static Ambev.DeveloperEvaluation.Domain.Events.SaleRegisteredEvent;
 
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale
@@ -11,6 +14,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale
     {
         private readonly ISaleRepository _saleRepository;
         private readonly IMapper _mapper;
+        private readonly IBus _bus;
 
         /// <summary>
         /// Initializes a new instance of CreateSaleHandler
@@ -18,10 +22,11 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale
         /// <param name="saleRepository">The user repository</param>
         /// <param name="mapper">The AutoMapper instance</param>
         /// <param name="validator">The validator for CreateSaleCommand</param>
-        public CreateSaleHandler(ISaleRepository saleRepository, IMapper mapper)
+        public CreateSaleHandler(ISaleRepository saleRepository, IMapper mapper, IBus bus)
         {
             _saleRepository = saleRepository;
             _mapper = mapper;
+            _bus = bus;
         }
 
         public async Task<CreateSaleResult> Handle(CreateSaleCommand command, CancellationToken cancellationToken)
@@ -48,6 +53,8 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale
                 throw new ValidationException(validationResult.Errors);
 
             var createdSale = await _saleRepository.CreateAsync(sale, cancellationToken);
+            await _bus.Publish(new SaleCreated(sale.Id, sale.SaleNumber, DateTime.UtcNow));
+
             var result = _mapper.Map<CreateSaleResult>(createdSale);
             return result;
         }

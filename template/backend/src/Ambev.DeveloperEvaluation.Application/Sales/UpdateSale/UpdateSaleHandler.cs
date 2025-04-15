@@ -3,6 +3,8 @@ using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
+using Rebus.Bus;
+using static Ambev.DeveloperEvaluation.Domain.Events.SaleRegisteredEvent;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale
 {
@@ -10,16 +12,19 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale
     {
         private readonly ISaleRepository _saleRepository;
         private readonly IMapper _mapper;
+        private readonly IBus _bus;
 
         /// <summary>
         /// Initializes a update instance of UpdateSaleHandler
         /// </summary>
         /// <param name="saleRepository">The sale repository</param>
         /// <param name="mapper">The AutoMapper instance</param>
-        public UpdateSaleHandler(ISaleRepository saleRepository, IMapper mapper)
+        /// <param name="bus">The Rebus instance</param>
+        public UpdateSaleHandler(ISaleRepository saleRepository, IMapper mapper, IBus bus)
         {
             _saleRepository = saleRepository;
             _mapper = mapper;
+            _bus = bus;
         }
 
         /// <summary>
@@ -61,6 +66,8 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale
             }
 
             await _saleRepository.UpdateAsync(sale, cancellationToken);
+            await _bus.Publish(new SaleModified(sale.Id, DateTime.UtcNow));
+
             var result = _mapper.Map<UpdateSaleResult>(sale);
             return result;
         }

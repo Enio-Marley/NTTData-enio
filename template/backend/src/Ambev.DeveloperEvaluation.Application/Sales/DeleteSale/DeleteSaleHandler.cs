@@ -2,6 +2,9 @@
 using AutoMapper;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Rebus.Bus;
+using static Ambev.DeveloperEvaluation.Domain.Events.SaleRegisteredEvent;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.DeleteSale
 {
@@ -11,15 +14,16 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.DeleteSale
     public class DeleteSaleHandler : IRequestHandler<DeleteSaleCommand, DeleteSaleResponse>
     {
         private readonly ISaleRepository _saleRepository;
-        private readonly IMapper _mapper;
+        private readonly IBus _bus;
 
         /// <summary>
         /// Initializes a new instance of GetSaleHandler
         /// </summary>
         /// <param name="saleRepository">The sale repository</param>
-        public DeleteSaleHandler(ISaleRepository saleRepository)
+        public DeleteSaleHandler(ISaleRepository saleRepository, IBus bus)
         {
             _saleRepository = saleRepository;
+            _bus = bus;
         }
 
         /// <summary>
@@ -38,6 +42,9 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.DeleteSale
                 throw new ValidationException(validationResult.Errors);
 
             var success = await _saleRepository.DeleteAsync(command.Id, cancellationToken);
+            await _bus.Publish(new SaleDeleted(command.Id, DateTime.UtcNow));
+
+
             if (!success)
                 throw new KeyNotFoundException($"Sale with ID {command.Id} not found");
 
