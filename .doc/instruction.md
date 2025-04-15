@@ -10,7 +10,7 @@
 
 1. Clone the repository:
 ```
-git clone https://github.com/your-username/your-repository.git
+git clone https://github.com/Enio-Marley/NTTData-enio.git
 ```
 
 2. Configure the connection string in
